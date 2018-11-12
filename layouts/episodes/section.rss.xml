@@ -1,0 +1,36 @@
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+  <channel>
+    <title>{{ .Site.Title }}</title>
+    <link>{{ .Permalink }}</link>
+    <language>{{ .Site.LanguageCode }}</language>
+    <copyright>{{ .Site.Copyright }}</copyright>
+    <itunes:subtitle>{{ .Site.Params.Subtitle }}</itunes:subtitle>
+    <itunes:author>{{ .Site.Params.Authors.Bruno.name }}</itunes:author>
+    <itunes:summary>{{ .Site.Params.Summary }}</itunes:summary>
+    <description>{{ .Site.Params.Description }}</description>
+    <itunes:owner>
+    <itunes:name>{{ .Site.Params.Authors.Bruno.name }}</itunes:name>
+    <itunes:email>{{ .Site.Params.Authors.Bruno.email }}</itunes:email>
+    </itunes:owner>
+    <itunes:image href="{{ .Site.Params.logo }}" />
+    <itunes:category text="Technology">
+      <itunes:category text="Software How-To" />
+      <itunes:category text="Tech News" />
+    </itunes:category>
+    {{ range first 50 .Data.Pages }}
+    {{ if eq .Type "episode"}}
+    <item>
+      <title>{{ title .Title }} - ep {{ .Params.episode }}</title>
+      <itunes:author>{{ .Site.Params.Authors.Bruno.name }}</itunes:author>
+      <itunes:summary><![CDATA[{{ .Description }}]></itunes:summary>
+      <enclosure url="{{ .Params.podcast }}" length="{{ .Params.podcast_bytes}}" type="audio/x-m4a" />
+      <guid>{{ .Params.podcast }}</guid>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }} </pubDate>
+      <itunes:duration>{{ .Params.podcast_duration}}</itunes:duration>
+    </item>
+    {{ end }}
+
+    {{ end }}
+  </channel>
+</rss>

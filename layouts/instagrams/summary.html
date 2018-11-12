@@ -1,0 +1,15 @@
+<!-- Mini Post -->
+<div class="col-sm-4 col col-12">
+	<article class="card mb-3">
+		
+			<a href="{{ .Permalink }}" title="{{ .Summary }}" >
+				{{ with .Resources.GetMatch "header" }}
+					{{ $image := .Fill "430x430" }} 
+					<img src="{{ $image.RelPermalink }}" alt="{{ $image.Name }}" class="card-img-top" />
+				{{ else }}
+					<img src="{{ .Site.BaseURL }}images/fractal_thumb.jpg" alt="header" />
+				{{ end }}
+			</a>
+
+	</article>
+</div>

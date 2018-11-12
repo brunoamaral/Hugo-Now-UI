@@ -1,0 +1,81 @@
+{{ define "bodyclasses" }}root{{ end }}
+{{ define "main" }}
+
+						<section id="category-list">
+						{{ if eq .Paginator.PageNumber 1 }}
+							<h2 class="d-block d-lg-none  text-center">{{ i18n "latest_post" }}</h2>
+						{{ end }}
+
+
+						{{ $firstpost := first 1 (where .Site.RegularPages ".Params.options.unlisted" false) }}
+						{{ range $firstpost }}
+
+							<div class="mini-posts  ">
+							<article class=" mini-post stories d-lg-none card-deck">
+								<a href="{{ .Permalink }}" class="image mini-featured-image card w-100">
+									<img src="{{- with .Resources.GetMatch "header" -}}
+										{{- $image := .Fill "430x150" -}}{{- $image.RelPermalink -}}{{- else -}}{{- .Site.BaseURL -}}images/fractal_thumb.jpg{{- end -}}" alt="" class="card-img-top">
+									<div class="card-body">
+
+									<h5 class="card-title">{{- .Title -}}</h5>
+
+									<p>{{ .Date.Format "January 2, 2006" }}</p>
+								</div>
+								</a>
+							</article>
+							</div>
+
+						{{ end }}
+						{{ if eq .Paginator.PageNumber 1 }}
+							<h1 class="d-sm-block d-lg-none text-center mt-3">{{ i18n "stories" }}</h1>
+									<div class="card-deck justify-content-center px-3 m-0">
+											<div class="row">
+												{{ range where (where .Site.Pages "Section" "stories") ".Params.unlisted" "!=" true | intersect (where .Site.Pages "Params.story_featured" "=" true) }}
+												{{ partial "story-card.html" . }}
+												{{ end }}
+											</div>
+									</div>
+						{{ end }}
+						</section>
+						
+						{{ range $firstpost }}
+
+						<div class="row m-0">
+							<!-- Post -->
+								<article class="post d-none d-lg-block">
+									<header>
+										<div class="title text-center">
+											<h1><a href="{{ .Permalink }}">{{ .Title }}</a></h1>
+											<p>{{ .Params.subtitle }}</p>
+										</div>
+										<div class="meta text-center"> 
+											<time class="published" datetime="{{ .Date.Format "2006-01-02T15:04:05" }}">{{ .Date.Format "January 2, 2006" }}</time>
+											<p class="readingtime">{{ .ReadingTime }} min read</p>
+										</div>
+
+									</header>
+										<a href="{{ .Permalink }}" title="{{ .Summary }}" class=""><img src="{{ partial "header_image" . }}" alt="{{ .Title }}" class="img-fluid image featured" /></a>
+										
+										<p class="mx-auto w-75">{{ .Summary }}</p>
+									<footer class="mx-auto w-75">
+										{{ if .Truncated }}
+												<a href="{{ .Permalink }}" class="btn btn-primary btn-sm">{{ i18n "continue_reading" }}</a>
+											{{else}}
+												<a href="{{ .Permalink }}#comments" class="btn btn-primary btn-sm">{{ i18n "comment" }}</a>
+										{{ end }}
+										{{ if .Params.categories }}
+										<ul class="list-inline">
+													{{ range $index, $category := .Params.categories }}
+														<li class="list-inline-item"><a href="{{ $.Site.BaseURL }}categories/{{ $category | urlize }}/">{{ $category }}</a></li>
+													{{ end }}
+										</ul>
+										{{ end }}
+									</footer>
+								</article>
+						</div>
+
+						{{ end }}
+
+						{{ partial "pagination.html" . }}
+
+{{ end }}

@@ -1,0 +1,25 @@
+{{ define "bodyclasses" }}single page contentgrouptype-{{ .Section }} contentgroupname-{{ .Title | urlize }}{{ end }}
+
+{{ define "title" }}
+	{{ .Title }}
+{{ end }}
+
+{{ define "subtitle" }}
+	{{ with .Params.subtitle }}
+	<h2 class="text-center">{{ . }}</h2>
+	{{ end }}
+{{ end }}
+
+{{ define "headerphoto" }}
+	{{- partial "header_image" . -}}
+{{ end }}
+
+{{ define "main" }}
+<!-- Main -->
+
+	<!-- Post -->
+		<article class="post">			
+			<section class="article-body">{{ .Content }}</section>
+		</article>
+
+{{ end }}

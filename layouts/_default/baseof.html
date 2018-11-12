@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<!--
+Future Imperfect by Pixelarity
+pixelarity.com | hello@pixelarity.com
+License: pixelarity.com/license
+1136239445
+-->
+<html lang="{{ .Lang }}">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	{{ if .IsHome }}
+	<title>{{ .Site.Title }}</title>
+	{{ else }}
+	<title>{{ .Site.Title }}{{ with .Title }} - {{ . | humanize }}{{ end }}{{ with .Params.story_title }}-{{ . }}{{ end }}</title>
+	{{ end }}
+	{{ .Hugo.Generator }}
+	<meta charset="utf-8" />
+	{{ if isset .Params "unlisted" }}
+	{{ if eq .Params.unlisted true }}
+	<meta name="robots" content="noindex, nofollow">
+	{{ end }}
+	{{ end }}
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+	<!--     Fonts and icons     -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+	<!-- CSS Files -->
+	<link href="/assets/css/bootstrap.min.css" rel="stylesheet" /> 
+	<link href="/assets/css/now-ui-kit.css?v=1.2.0" rel="stylesheet" />
+
+	{{ with .OutputFormats.Get "rss" }}
+	<link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title }}">
+	{{ end }}
+
+	<link rel="alternate" href="{{ .Permalink }}" hreflang="{{ .Lang }}">
+	{{ if .IsTranslated }}
+	    {{ range .Translations }}
+	<link rel="alternate" href="{{ .Permalink }}" hreflang="{{ .Lang }}">
+	    {{ end}}
+	{{ end }}
+
+	{{ template "_internal/opengraph.html" . }}
+
+	<meta property="og:site_name" content="{{ .Site.Title }} by {{ $.Site.Params.author }}" />
+	<meta name="twitter:site" content="{{ .Site.Title }}"/>
+	<meta name="twitter:title" content="{{ .Title }}"/>
+	<meta name="twitter:card" content="summary_large_image"/>
+
+	{{ if .IsHome }}
+		<meta name="description" content="{{ $.Site.Params.description }}" />
+		<meta name="twitter:description" content="{{ $.Site.Params.description }}"/>
+		<meta property="og:image" content="{{ $.Site.BaseURL }}{{ $.Site.Params.logo }}" />
+	{{ else }}
+		<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
+		<meta name="twitter:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}"/>
+	{{ if and (.Section) (ne .IsPage true) }}
+		{{ with .Resources.GetMatch "sectionHeader" }}
+			{{ $image := .Fill "500x500" }}
+			<meta name="twitter:image" content="{{ with $image }}{{ $image.Permalink }}{{ else }}{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}{{ end }}"/> 
+			<meta property="og:image" content="{{ with $image }}{{ $image.Permalink }}{{ else }}{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}{{ end }}" />
+		{{ end }}
+	{{end}}
+
+	{{ if .IsPage }}
+		{{ with .Resources.GetMatch "header" }}
+			{{ $image := .Fill "500x500" }} 
+			<meta name="twitter:image" content="{{ $image.Permalink }}" />
+			<meta property="og:image" content="{{ $image.Permalink }}" />
+		{{ else }}
+			<meta property="og:image" content="{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}" />
+			<meta name="twitter:image" content="{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}" />
+		{{ end }}
+	{{ end }}
+
+	{{ end }}
+	{{ if not .Date.IsZero }}<meta property="og:updated_time" content="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}"/>{{ end }}
+{{ with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+{{ with .Params.locale }}<meta property="og:locale" content="{{ . }}" />{{ end }}
+	{{ with .Params.videos }}{{ range .Params.videos }}
+	<meta property="og:video" content="{{ . | absURL }}" />{{ end }}{{ end }}
+	<!-- If it is part of a story, link to related articles -->
+	{{ if .IsPage }}
+	<link rel="author" href="{{ if .Params.author_googleplus }}{{ .Params.author_googleplus }}{{else}}{{$.Site.Params.Authors.Bruno.googleplus}}{{end}}"/>
+		{{ $permalink := .Permalink }} {{ $siteSeries := .Site.Taxonomies.stories }}
+	{{ with .Params.story }}
+	{{ range $name := . }}
+	  {{ $stories := index $siteSeries $name }}
+	  {{ range $page := first 6 $stories.Pages }}
+	    {{ if ne $page.Permalink $permalink }}<meta property="og:see_also" content="{{ $page.Permalink }}" />{{ end }}
+	  {{ end }}
+	{{ end }}{{ end }}
+	<meta property="article:author" content="{{ $.Site.Params.author }}" />
+	<meta name="twitter:creator" content="@{{ $.Site.Params.twitterHandle }}">
+
+	<meta property="article:publisher" content="{{ $.Site.Params.articlePublisher }}" />
+	<meta property="article:modified_time" content="{{ .Lastmod }}" />
+	<meta property="article:section" content="{{ .Section }}" />
+	{{ with .Params.tags }}{{ range first 6 . }}
+	<meta property="article:tag" content="{{ . }}" />{{ end }}{{ end }}
+	{{ end }}
+	<meta name="twitter:dnt" content="on">
+
+	<!-- Facebook Page Admin ID for Domain Insights -->
+	{{ with $.Site.Social.facebook_admin }}<meta property="fb:admins" content="{{ . }}" />{{ end }}
+	{{ with $.Site.Social.facebook_app_id }}<meta property="fb:app_id" content="{{ . }}" />{{ end }}
+	{{ template "_internal/google_news.html" . }}
+	{{ with $.Site.Params.googleSiteVerification }}
+	<meta name="google-site-verification" content="{{ . }}" />		
+	{{ end }}
+	{{ if ne .Site.IsServer true }}
+	{{ with $.Site.Params.googleTagManager }}
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','{{ . }}');</script>
+	<!-- End Google Tag Manager -->
+	{{ end }}
+	{{ end }}
+</head>
+
+	<body class="{{ block "bodyclasses" . }}{{ end }} sidebar-collapse" id="{{ block "bodyid" . }}{{ end }}">	
+	{{ if ne .Site.IsServer true }}
+	{{ with $.Site.Params.googleTagManager }}
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ . }}"
+	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+	{{ end }}
+	{{ end }}
+
+<!-- Menu -->
+  <nav class="navbar navbar-expand-lg bg-primary fixed-top navbar-transparent " color-on-scroll="400">
+    <div class="container">
+      <!--
+      <div class="dropdown button-dropdown">
+        <a href="#pablo" class="dropdown-toggle" id="navbarDropdown" data-toggle="dropdown">
+          <span class="button-bar"></span>
+          <span class="button-bar"></span>
+          <span class="button-bar"></span>
+        </a>
+        
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-header">Dropdown header</a>
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Separated link</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">One more separated link</a>
+        </div>
+    	
+      </div>
+  		-->
+      <div class="navbar-translate">
+        <a class="navbar-brand" href="/" rel="tooltip" title="" data-placement="bottom" target="">
+          {{ .Site.Title }}
+        </a>
+        <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-bar top-bar"></span>
+          <span class="navbar-toggler-bar middle-bar"></span>
+          <span class="navbar-toggler-bar bottom-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse justify-content-end" id="navigation" data-nav-image="/assets/img/blurred-image-1.jpg">
+        <ul class="navbar-nav">
+
+
+			{{ range .Site.Menus.main }}
+			<li class="nav-item"><a href="{{ .URL | absLangURL }}" title="{{ .Post }}" class="nav-link top-menu menu-click {{ if ($.Page.IsMenuCurrent "main" .) ($.Page.HasMenuCurrent "main" .) }} active {{ end }}">{{ .Name }}</a></li>
+			{{ end }} {{ if .Site.IsMultiLingual }} {{ range .Site.Languages }} {{ if eq . $.Site.Language }}
+			<li class="nav-item"><a href="#" class="nav-link active language"><strong>{{ .Lang }}</strong></a></li>
+			{{ else }} {{ range $.Translations }}
+			<li class="nav-item"><a href="{{ .Permalink }}" class="nav-link">{{ .Lang }}</a></li>
+			{{ end }} {{ end }} {{ end }} {{ end }}
+			</ul>
+
+
+      </div>
+    </div>
+  </nav>
+
+			<!-- End Menu -->
+
+  <!-- End Navbar -->
+  <div class="wrapper">
+    <div class="page-header {{ if ne .IsHome true }}page-header-small{{ end }}">
+    	{{ if .IsHome }}
+    	<div class="page-header-image" data-parallax="true" style="background-image: url('{{ $.Site.Params.headerPhoto }}'); transform: translate3d(0px, 0px, 0px);"></div>
+
+
+    	<div class="container">
+        <div class="content-center brand">
+        	<img class="n-logo" src="{{ $.Site.Params.logo }}" alt="">
+
+            <h1 class="h1-seo">{{ block "title" . }}{{ .Site.Title }}{{ end }}</h1>
+            			{{ if .IsHome }}
+	            			{{ $map := (index $.Site.Params.profiles ) }}
+	            			{{ range $key, $val := $map }}
+		                      	<a href="{{ $val }}" class="btn btn-primary btn-icon btn-round">
+		                      	  <i class="fab fa-{{ printf $key }}"></i>
+		                      	</a>
+	                      	{{ end }}
+                      	{{ end }}
+            <h3>{{ block "subtitle" . }}
+            	
+            {{ end }}</h3>
+        </div>
+<!--         <h6 class="category category-absolute">Designed by <a href="http://invisionapp.com/" target="_blank"><img src="./assets/img/invision-white-slim.png" class="invision-logo"></a>. Coded by <a href="https://www.creative-tim.com" target="_blank"><img src="./assets/img/creative-tim-white-slim2.png" class="creative-tim-logo"></a>.</h6>
+ -->    </div>
+    	{{ else }}
+    	<div class="page-header-image" data-parallax="true" style="background-image: url('{{- block "headerphoto" . }}{{ end }}');">
+    	
+      </div>
+      <div class="content-center">
+        <div class="container">
+          <h1 class="title" itemprop="headline">
+          	{{ block "title"  . }}
+          	{{ end }}
+          </h1>
+          {{ block "subtitle" . }}          	
+          {{ end }}
+          <div class="text-center">
+
+
+
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+
+	<div class="section">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					{{ block "main" . }}
+					{{ end }}
+				</div>
+			</div>
+			<div class="separator separator-primary"></div>
+				
+		</div>
+	</div>
+</div>
+
+<!-- Footer -->
+
+	<footer id="footer" class="footer footer-default">
+		<div class="container">
+			<h2 class="sr-only">{{ i18n "related_links" }}</h2>
+				<ul class="icons mx-auto list-inline text-center">
+					<li class="list-inline-item"><a href="https://twitter.com/brunoamaral" class="fab fa-twitter"><span class="sr-only sr-only-focusable">Twitter</span></a></li>
+					<li class="list-inline-item"><a href="https://www.linkedin.com/in/brunoamaral" class="fab fa-linkedin"><span class="sr-only sr-only-focusable">LinkedIn</span></a></li>
+					<li class="list-inline-item"><a href="https://www.facebook.com/Bruno-Amaral-118353851516878/" class="fab fa-facebook"><span class="sr-only sr-only-focusable">Facebook</span></a></li>
+					<li class="list-inline-item"><a href="https://instagram.com/brunoamaral" class="fab fa-instagram"><span class="sr-only sr-only-focusable">Instagram</span></a></li>
+					<li class="list-inline-item"><a href="https://github.com/brunoamaral" class="fab fa-github"><span class="sr-only sr-only-focusable">Github</span></a></li>
+					<li class="list-inline-item"><a href="{{ .RSSLink }}" class="fa fa-rss"><span class="sr-only sr-only-focusable">RSS</span></a></li>
+					<li class="list-inline-item"><a href="/page/contact" class="fa fa-envelope"><span class="sr-only sr-only-focusable">Email</span></a></li>
+				</ul>
+				<div class="copyright">
+					&copy; {{ $.Site.Params.author }} | <a href="/page/privacy-policy/">Privacy Policy</a>
+				</div>
+		</div>
+	</footer>
+
+{{ if .HasShortcode "gallery" }}
+	
+	<!-- Root element of PhotoSwipe. Must have class pswp. -->
+	<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+	<!-- Background of PhotoSwipe.
+	     It's a separate element, as animating opacity is faster than rgba(). -->
+	<div class="pswp__bg"></div>
+	<!-- Slides wrapper with overflow:hidden. -->
+	<div class="pswp__scroll-wrap">
+	    <!-- Container that holds slides.
+	      PhotoSwipe keeps only 3 of them in DOM to save memory.
+	      Don't modify these 3 pswp__item elements, data is added later on. -->
+	    <div class="pswp__container">
+	      <div class="pswp__item"></div>
+	      <div class="pswp__item"></div>
+	      <div class="pswp__item"></div>
+	    </div>
+	    <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+	    <div class="pswp__ui pswp__ui--hidden">
+	    <div class="pswp__top-bar">
+	      <!--  Controls are self-explanatory. Order can be changed. -->
+	      <div class="pswp__counter"></div>
+	      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+	      <button class="pswp__button pswp__button--share" title="Share"></button>
+	      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+	      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+	      <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+	      <!-- element will get class pswp__preloader--active when preloader is running -->
+	      <div class="pswp__preloader">
+	        <div class="pswp__preloader__icn">
+	          <div class="pswp__preloader__cut">
+	            <div class="pswp__preloader__donut"></div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+	      <div class="pswp__share-tooltip"></div>
+	    </div>
+	    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+	    </button>
+	    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+	    </button>
+	    <div class="pswp__caption">
+	      <div class="pswp__caption__center"></div>
+	    </div>
+	    </div>
+	    </div>
+	</div>
+	<link rel="stylesheet" href="/plugins/photoswipe/photoswipe.css">
+	<link rel="stylesheet" href="/plugins/photoswipe/default-skin/default-skin.css">
+
+	<script src="/plugins/photoswipe/photoswipe.min.js"></script>
+	<script src="/plugins/photoswipe/photoswipe-ui-default.min.js"></script>
+	<script src="/plugins/photoswipe/initphotoswipe.js"></script>
+	<script>initPhotoSwipeFromDOM('.gallery');</script>
+{{ end }} 
+
+
+		<!-- Scripts -->
+		<script src="/assets/js/core/jquery.min.js" type="text/javascript"></script>
+		<script src="/assets/js/core/popper.min.js" type="text/javascript"></script>
+		<script src="/assets/js/core/bootstrap.min.js" type="text/javascript"></script>
+		<!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
+		<script src="/assets/js/plugins/bootstrap-switch.js"></script>
+		<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+		<script src="/assets/js/plugins/nouislider.min.js" type="text/javascript"></script>
+		<!--  Plugin for the DatePicker, full documentation here: https://github.com/uxsolutions/bootstrap-datepicker -->
+		<script src="/assets/js/plugins/bootstrap-datepicker.js" type="text/javascript"></script>
+		<!--  Google Maps Plugin    -->
+		{{ with $.Site.Params.apis.googlemaps }}
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ . }}"></script>			
+		{{ end }}
+		<!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
+		<script src="/assets/js/now-ui-kit.js?v=1.2.0" type="text/javascript"></script>
+
+			<script type="application/ld+json">
+			{ "@context": "http://schema.org", 
+			{{ if .IsHome }}
+			"@type": "WebSite",
+			{{ else }}
+			"@type": "Article",
+			{{ end }}
+
+			"mainEntityOfPage": {
+				"@type": "WebPage",
+				"@id": "{{ .Permalink }}"
+				},
+			"headline": "{{ .Title }}",
+			{{ with .Params.subtitle }}"alternativeHeadline": "{{ . }}",{{ end }}
+			"image": "{{- if .IsHome -}}
+						{{ $.Site.BaseURL }}{{ $.Site.Params.logo }}
+						{{- else -}}
+							{{- with $.Page.Resources.GetMatch "header" -}}
+							{{ .Permalink }}
+						{{- end -}}
+						{{- end -}}",
+			"author": {
+			   "@type": "Person",
+			   "name": "{{ $.Site.Params.author }}"
+			},			 
+			{{ with .Params.tags }}"keywords": "{{ range first 6 . }}{{ . }}{{ end }}",{{ end }} 
+			"wordcount": "{{ .WordCount }}",
+			"publisher": {
+			 "@type": "Organization",
+			 "name": "{{ $.Site.Params.author }}",
+			 "logo": {
+			   "@type": "ImageObject",
+			   "url": "{{ $.Site.BaseURL }}{{ $.Site.Params.logo }}",
+			   "height": 60
+			 }
+			},
+			"url": "{{ .Site.BaseURL }}",
+			"datePublished": "{{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}{{ end }}",
+			"dateCreated": "{{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}{{ end }}",
+			"dateModified": "{{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}{{ end }}",
+			"description": "{{ if .Params.description }}{{ .Params.description | plainify }}{{ else }}{{ .Summary | plainify }}{{ end }}",
+			"articleBody": "{{ .Plain  }}"
+			}
+			</script>
+
+		</body>
+</html>

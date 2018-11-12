@@ -1,0 +1,6 @@
+{{- if (.Params.options.showHeader) nil | or (.Params.options.showHeader) true }}
+	{{- with .Resources.GetMatch "header" -}}
+		{{- $image := .Resize "1350x" -}}
+		{{- $image.RelPermalink -}}
+	{{- end -}}
+{{- end -}} 

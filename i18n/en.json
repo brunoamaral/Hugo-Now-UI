@@ -1,0 +1,62 @@
+[
+  {
+    "id": "older_posts",
+    "translation": "Older Posts"
+  },
+  {
+    "id": "newer_posts",
+    "translation": "Newer Posts"
+  },
+  {
+    "id": "older_photos",
+    "translation": "Older Photos"
+  },
+  {
+    "id": "newer_photos",
+    "translation": "Newer Photos"
+  },
+  {
+    "id":"categories",
+    "translation":"Categories"
+  },
+  {
+    "id": "continue_reading",
+    "translation": "Continue Reading"
+  },
+  {
+    "id":"comment",
+    "translation": "Comment"
+  },
+  {
+    "id":"reading_time",
+    "translation":"min read"
+  },
+  {
+    "id": "latest_post",
+    "translation": "Latest Post"
+  },
+  {
+    "id": "posts_tagged_with",
+    "translation": "Posts tagged with"
+  },
+  {
+    "id": "posts_categorized_as",
+    "translation": "Posts categorized as"
+  },
+  {
+    "id":"related_links",
+    "translation":"Related Links"
+  },
+  {
+    "id":"search",
+    "translation":"Search"
+  },
+  {
+    "id": "stories",
+    "translation": "Stories"
+  },
+  {
+    "id":"tags",
+    "translation":"Tags"
+  }
+]

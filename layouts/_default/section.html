@@ -1,0 +1,25 @@
+{{ define "bodyclasses" }}section-list post-list post-list-html contentgrouptype-{{ .Kind }} contentgroupname-{{ .Section | urlize }} {{ end }}
+
+{{ define "title" }}
+	{{ .Title }}
+{{ end }}
+
+{{ define "subtitle" }}
+
+{{ end }}
+
+{{ define "headerphoto" }}
+	{{- $.Site.Params.headerPhoto -}}
+{{ end }}
+
+{{ define "main" }}
+		<section id="category-list" class="card-group">
+				<div class="row px-2 mx-0">
+					{{ range (.Paginate (where (where .Site.RegularPages ".Params.options.unlisted" false) "Section" "!=" "instagrams") 9).Pages }}
+					     	{{ .Render "summary"}}
+					{{ end }}
+				</div>
+		</section>
+
+		{{ partial "pagination.html" . }}
+{{ end }}

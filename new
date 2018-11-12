@@ -1,0 +1,119 @@
+#!/bin/bash
+
+GREEN=$(tput -T screen setaf 2)
+POWDER_BLUE=$(tput -T screen setaf 153)
+NORMAL=$(tput sgr0)
+
+if [[ $1 = "story" ]]; then
+	#statements
+	## Usage
+	# `newStory.sh STORY TITLE-with-dashes`
+	# `new story section section-name`
+
+	if [[ $2 = 'section' ]]; then
+	
+		mkdir -p content/stories/"$3";
+		echo "---
+resources:
+- src: 
+  name: \"sectionHeader\"
+story_slug: $3
+story_title: \"\"
+story_subtitle: \"\"
+story_description: ""
+story_color: \"#8bfbbe\"
+story_style: \"\"
+story_header_height: \"600px\"
+story_published: true
+unlisted: false
+---
+		" > content/stories/"$3"/_index.md
+		open content/stories/"$3"/
+		else
+			export STORY=$2
+			export SLUG=$3
+			DATE=`date "+%Y-%m-%d"`
+
+			hugo new stories/$STORY/$DATE-$SLUG/index.md
+
+			export DESTINATION="content/stories/$STORY/$DATE-$SLUG"
+
+			mkdir -p $DESTINATION/gallery;
+			mkdir -p $DESTINATION/images/;
+
+			open $DESTINATION/; open $DESTINATION/index.md; cd $DESTINATION/;
+
+			printf "\n$DESTINATION\n";
+	fi
+
+
+
+fi
+
+if [[ $1 = "post" ]]; then
+	#statements
+	# POSTS
+	export SLUG=$2
+	DATE=`date "+%Y-%m-%d"`
+
+	hugo new post/$DATE-$SLUG/index.md
+
+	mkdir -p content/post/$DATE-$SLUG/gallery;
+	mkdir -p content/post/$DATE-$SLUG/images/;
+
+	open content/post/$DATE-$SLUG/; open content/post/$DATE-$SLUG/index.md; cd content/post/$DATE-$SLUG/;
+fi
+
+if [[ $1 = "paginas-tantas" ]]; then
+	printf "\n ${POWDER_BLUE}### Creating files ###\n${NORMAL}"
+	FILE_EN=`date +%Y-%m-%d`
+	FILE_PT=`date +%Y-%m-%d`
+
+	hugo new stories/paginas-tantas/$FILE_EN/index.md;
+	hugo new stories/paginas-tantas/$FILE_PT/index.pt.md;
+
+	sed -i'' -e 's/draft\: true/draft\: false/g' content/stories/paginas-tantas/$FILE_EN/index.md;
+	sed -i'' -e 's/draft\: true/draft\: false/g' content/stories/paginas-tantas/$FILE_PT/index.pt.md;
+
+	sed -i'' -e 's/stories\:/stories\: \[\"paginas-tantas\"\]/g' content/stories/paginas-tantas/$FILE_EN/index.md;
+	sed -i'' -e 's/stories\:/stories\: \[\"paginas-tantas\"\]/g' content/stories/paginas-tantas/$FILE_PT/index.pt.md;
+
+	rm content/stories/paginas-tantas/$FILE_EN/index.md-e
+	rm content/stories/paginas-tantas/$FILE_PT-e/index.pt.md-e
+
+	printf "\n ${POWDER_BLUE}### Opening files ###\n${NORMAL}"
+	open content/stories/paginas-tantas/$FILE_PT/index.pt.md;
+	open content/stories/paginas-tantas/$FILE_EN/index.md;
+fi
+
+if [[ $1 = 'undraft' ]]; then
+	DATE=`date "+%FT%TZ"`
+
+	gsed -i "s/date:.*$/date: ${DATE}/g" $2;
+	gsed -i "/draft: true/d" $2;
+fi
+
+
+if [[ $1 = 'publish' ]]; then
+	if [[ $2 ]]; then
+		commit_message="$2"
+	else
+		commit_message="novo post"
+	fi
+	git add --all ; git commit -am "$commit_message" ; git push;
+fi
+
+if [[ $1 = 'deploy' ]]; then
+
+	printf "\n${GREEN}### Pushing changes and building on the other side ###\n${NORMAL}"
+	git push && ssh -t DeLorean 'cd Digital-Insanity; ./build.sh'
+fi
+
+if [[ $1 = 'help' ]]; then
+	#statements
+	echo "${GREEN}post : ${NORMAL}creates a new post, sintax is :: new.sh post TITLE-with-dashes"
+	echo "${GREEN}story : ${NORMAL}creates a new post inside a story, sintax is ::  new.sh story STORY-NAME TITLE-with-dashes"
+	echo "${GREEN}paginas-tantas : ${NORMAL}creates a new post insite the paginas-tantas story"
+	echo "${GREEN}publish : ${NORMAL}adds all files to git and commits the changes to the current branch"
+	echo "${GREEN}deploy : ${NORMAL}pushes any commits to origin and connects to the DeLorean server to run the build script"
+fi

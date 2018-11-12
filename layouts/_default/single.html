@@ -1,0 +1,98 @@
+{{ define "bodyclasses" }}single contentgrouptype-{{ .Section }} {{ with .Params.stories }}contentgroupname-{{ index . 0 | urlize }}{{ end }} article article-title-{{ .Title | urlize }}{{ end }}
+
+{{ define "title" }}
+	{{ .Title }}
+{{ end }}
+
+{{ define "subtitle" }}
+	{{ with .Params.subtitle }}
+		<h2 class="title">{{ .}}</h2>	
+	{{ end }}
+{{ end }}
+
+{{ define "headerphoto" }}
+	{{- partial "header_image.html" . -}}
+{{ end }}
+
+{{ define "main" }}
+
+						<div class="row">
+								<!-- Post -->
+									<article class="post col">
+
+										<header>
+
+											<div class="meta text-center">
+												{{ if .Params.author }}
+													<a href="/about/{{ string .Params.author | urlize }}" itemprop="author" title="{{ .Params.author }}" class="author">{{ if .Params.avatar }} <img src="{{ $.Site.BaseURL }}images/avatar_{{ .Params.avatar }}.jpg" alt="" class="rounded-circle" /> {{ else }}<img src="{{ $.Site.BaseURL }}images/avatar_bruno.jpg" alt="" />{{ end }}</a>
+												{{ else }}
+													<a href="{{ .Site.Params.authors.Bruno.authorlink }}" title="{{ .Site.Params.authors.Bruno.name }}" class="author"><img src="{{ $.Site.BaseURL }}images/avatar_bruno.jpg" alt="Bruno Amaral" class="rounded-circle" /></a>
+												{{ end }}
+												<time class="published" itemprop="datePublished" datetime="{{ .Date.Format "2006-01-02T15:04:05" }}">{{ .Date.Format "January 2, 2006" }}</time>
+
+												<p class="readingtime">{{ .ReadingTime }} min read</p>
+												{{ if .IsTranslated }} Translations:
+												    {{ range .Translations }}
+												        <a href="{{ .Permalink }}">{{ .Language.LanguageName }}</a>
+												    {{ end}}
+												{{ end }}
+											</div>
+										</header>
+
+										<section class="article-body">{{ .Content }}</section>
+										<footer>
+											<ul class="stats list-inline">
+
+									{{ if isset .Params "categories" }}
+									<li class="list-inline-item">{{ i18n "posts_categorized_as" }}:</li> 
+										{{ range $index, $category := .Params.categories }}
+											<li class="list-inline-item"><a href="{{ $.Site.BaseURL }}categories/{{ $category | urlize }}" class="">{{ $category }}</a></li>
+										{{ end }}
+									{{ end }}
+
+									{{ if isset .Params "stories" }}
+										{{ range $index, $story := .Params.stories }}
+											<li><a href="{{ $.Site.BaseURL }}stories/{{ $story | urlize }}" class="">{{ $story }}</a></li>
+										{{ end }}
+									{{ end }}
+
+											</ul>
+										</footer>
+									</article>
+						</div>
+
+					{{ if .Params.stories }} 
+					
+					{{ $name_url := index .Params.stories 0 | urlize }}
+					{{ $current_story := printf "%s/%s" "/stories" $name_url  }}
+					{{ $this := $.Site.GetPage $current_story }}
+
+					<section id="category-list" class="px-5">
+						<h2>{{ $this.Params.story_title }}</h2> 
+
+						<h3>{{ $this.Params.story_subtitle }}</h3>
+
+						<p>Select one of the chapters</p>
+
+						<div class="card-deck">
+							<div class="row">
+							{{ range (index .Site.Taxonomies.stories $name_url ) }}
+								{{ .Render "summary" }}
+							{{end}}
+							</div>
+						</div>
+					</section>
+					{{ end }} 
+
+					{{ partial "pagination.html" }}
+
+					<a name="comments"></a>
+					<div class="row ">
+						<div class="col-10 mx-auto">
+							{{ template "_internal/disqus.html" . }}
+						</div>
+					</div>
+
+
+			
+{{ end }}

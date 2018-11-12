@@ -1,0 +1,16 @@
+{{ if eq (.Scratch.Get "columns") 1 }}
+<div class="col">
+	{{ else }}
+<div class="col-sm-4 col-xs-12 mb-3">
+{{ end }}
+
+	<a href="{{ .Permalink }}" class="card story" style="{{ with .Params.story_style}} {{ . | safeCSS }} {{ end }}">
+		{{ with .Resources.GetMatch "sectionHeader" }}
+		<img class="card-img-top" src="{{ $image := .Fill "430x150" }}{{ $image.RelPermalink }}" alt="">
+		{{end}}
+		<div class="card-body">
+			<h6 class="card-title">{{  .Params.story_title }}</h6>
+			<p class="card-subtitle mb-2 text-muted">{{ with .Params.story_subtitle }}{{ . }} {{ end }}</p>
+	  </div>
+	</a>
+</div>

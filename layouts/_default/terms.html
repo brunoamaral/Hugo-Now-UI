@@ -1,0 +1,53 @@
+{{ define "bodyclasses" }}
+terms contentgrouptype-terms contentgroupname-the-stories article-title-subhomepage	
+{{ end }}
+
+{{ define "title" }}
+	Explore
+{{ end }}
+
+{{ define "subtitle" }}
+
+{{ end }}
+
+{{ define "headerphoto" }}
+	{{- $.Site.Params.headerPhoto -}}
+{{ end }}
+
+{{ define "main" }}
+					<section class=""> 
+					<h2 class="text-center">{{ i18n "stories" }}</h2>
+						<div class="card-deck">
+
+						<div class="row">
+							{{ $stories := where (where (where .Site.Pages "Section" "stories") "Kind" "taxonomy") ".Params.options.unlisted" false }}
+
+							{{ range $stories }} 
+								{{ .Scratch.Set "columns" (len $stories) }}
+								{{ partial "story-card.html" . }}
+							{{ end }}
+						</div>
+						</div>
+					</section>
+					
+					<section id="all-categories">
+					<article class="">
+
+						<h2>{{ i18n "categories" }}</h2>
+							<ul>		
+									{{ range $key, $value := .Site.Taxonomies.categories }}
+										<li><a href="{{ printf "categories/%s/" $key | relLangURL }}" title="{{ i18n "posts_categorized_as" }} {{ $key | humanize }}">{{ $key | humanize }}</a> ({{ len $value }})</li>
+									{{ end }}
+							</ul>
+
+							<h2>{{ i18n "tags" }}</h2>
+								<ul class="tags">			
+										{{ range $key, $value := .Site.Taxonomies.tags }}
+										<li><a href="{{ printf "tags/%s/" $key | relLangURL }}" title="{{ i18n "posts_tagged_with" }} {{ $key | humanize }}">{{ $key | humanize }}</a> ({{ len $value }})</li>
+										{{ end }}
+								</ul>
+
+					</article>
+					</section>
+
+{{ end }}

@@ -1,0 +1,43 @@
+{
+  "continue_reading": {
+    "other": "Continuar a ler"
+  },
+  "comment":{
+      "other": "Comentar"
+  },
+  "categories": {
+    "other": "Categorias"
+  },
+  "latest_post": {
+    "other": "Último Artigo"
+  },
+  "newer_posts": {
+    "other": "Artigos mais recentes"
+  },
+  "newer_photos": {
+    "other": "Fotos recentes"
+  },
+  "reading_time": {
+    "other": "min de leitura"
+  },
+  "older_posts": {
+    "other": "Artigos mais antigos"
+  },
+  "older_photos": {
+    "other": "Fotos anteriores"
+  },
+  "posts_tagged_with": { "other": "Artigos com a etiqueta"},
+  "posts_categorized_as": { "other": "Artigos com a categoria"},
+  "related_links":{
+    "other":"Links relacionados"
+  },
+  "search": {
+    "other": "Pesquisar"
+  },
+  "stories": {
+    "other": "Histórias"
+  },
+  "tags": {
+    "other":"Etiquetas"
+  }
+}

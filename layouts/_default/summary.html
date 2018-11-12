@@ -1,0 +1,16 @@
+<div class="col-sm-4 col col-12">
+		<a href="{{ .Permalink }}" title="{{ .Summary }}" class="card mt-3 mx-auto">
+			{{ with .Resources.GetMatch "header" }}
+				{{ $image := .Fill "430x150" }} 
+				<img class="card-img-top" src="{{ $image.RelPermalink }}" alt="{{ $image.Name }}" />
+			{{ else }}
+				<img class="card-img-top" src="{{ .Site.BaseURL }}images/fractal_thumb.jpg" alt="header" />
+			{{ end }}
+
+			<h5 class="card-title px-3">{{ .Title }}</h5>
+			
+			<p class="readingtime px-3">{{ .ReadingTime }} min read</p>
+
+			<p class="mb-0 px-3 card-footer"><time class="published" datetime="{{ .Date.Format "2006-01-02T15:04:05" }}">{{ .Date.Format "January 2, 2006" }}</time></p>
+		</a>
+</div>
