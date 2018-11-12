@@ -81,7 +81,7 @@ License: pixelarity.com/license
 	<meta property="og:video" content="{{ . | absURL }}" />{{ end }}{{ end }}
 	<!-- If it is part of a story, link to related articles -->
 	{{ if .IsPage }}
-	<link rel="author" href="{{ if .Params.author_googleplus }}{{ .Params.author_googleplus }}{{else}}{{$.Site.Params.Authors.Bruno.googleplus}}{{end}}"/>
+	<link rel="author" href="{{ if .Params.author_googleplus }}{{ .Params.author_googleplus }}{{else}}{{$.Site.Params.authors.Main.googleplus}}{{end}}"/>
 		{{ $permalink := .Permalink }} {{ $siteSeries := .Site.Taxonomies.stories }}
 	{{ with .Params.story }}
 	{{ range $name := . }}

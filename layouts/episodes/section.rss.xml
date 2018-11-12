@@ -5,12 +5,12 @@
     <language>{{ .Site.LanguageCode }}</language>
     <copyright>{{ .Site.Copyright }}</copyright>
     <itunes:subtitle>{{ .Site.Params.Subtitle }}</itunes:subtitle>
-    <itunes:author>{{ .Site.Params.Authors.Bruno.name }}</itunes:author>
+    <itunes:author>{{ .Site.Params.authors.Main.name }}</itunes:author>
     <itunes:summary>{{ .Site.Params.Summary }}</itunes:summary>
     <description>{{ .Site.Params.Description }}</description>
     <itunes:owner>
-    <itunes:name>{{ .Site.Params.Authors.Bruno.name }}</itunes:name>
-    <itunes:email>{{ .Site.Params.Authors.Bruno.email }}</itunes:email>
+    <itunes:name>{{ .Site.Params.authors.Main.name }}</itunes:name>
+    <itunes:email>{{ .Site.Params.authors.Main.email }}</itunes:email>
     </itunes:owner>
     <itunes:image href="{{ .Site.Params.logo }}" />
     <itunes:category text="Technology">
@@ -21,7 +21,7 @@
     {{ if eq .Type "episode"}}
     <item>
       <title>{{ title .Title }} - ep {{ .Params.episode }}</title>
-      <itunes:author>{{ .Site.Params.Authors.Bruno.name }}</itunes:author>
+      <itunes:author>{{ .Site.Params.authors.Main.name }}</itunes:author>
       <itunes:summary><![CDATA[{{ .Description }}]></itunes:summary>
       <enclosure url="{{ .Params.podcast }}" length="{{ .Params.podcast_bytes}}" type="audio/x-m4a" />
       <guid>{{ .Params.podcast }}</guid>

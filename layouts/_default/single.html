@@ -26,7 +26,7 @@
 												{{ if .Params.author }}
 													<a href="/about/{{ string .Params.author | urlize }}" itemprop="author" title="{{ .Params.author }}" class="author">{{ if .Params.avatar }} <img src="{{ $.Site.BaseURL }}images/avatar_{{ .Params.avatar }}.jpg" alt="" class="rounded-circle" /> {{ else }}<img src="{{ $.Site.BaseURL }}images/avatar_bruno.jpg" alt="" />{{ end }}</a>
 												{{ else }}
-													<a href="{{ .Site.Params.authors.Bruno.authorlink }}" title="{{ .Site.Params.authors.Bruno.name }}" class="author"><img src="{{ $.Site.BaseURL }}images/avatar_bruno.jpg" alt="Bruno Amaral" class="rounded-circle" /></a>
+													<a href="{{ .Site.Params.authors.Main.authorlink }}" title="{{ .Site.Params.authors.Main.name }}" class="author"><img src="{{ $.Site.BaseURL }}images/avatar_bruno.jpg" alt="Bruno Amaral" class="rounded-circle" /></a>
 												{{ end }}
 												<time class="published" itemprop="datePublished" datetime="{{ .Date.Format "2006-01-02T15:04:05" }}">{{ .Date.Format "January 2, 2006" }}</time>
 
