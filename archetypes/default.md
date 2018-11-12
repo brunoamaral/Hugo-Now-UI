@@ -16,7 +16,8 @@ tags:
 categories: 
   - 
 title: "{{ replace (getenv "SLUG") "-" " " | title }}"
-unlisted: false
+
 options:
+  unlisted: false
   showHeader: true
 ---
