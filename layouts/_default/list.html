@@ -1,4 +1,5 @@
 {{ define "bodyclasses" }}post-list post-list-html contentgrouptype-{{ .Data.Singular }} contentgroupname-{{ .Title | urlize }} {{ end }}
+
 {{ define "title" }}
 	{{ .Title }}
 {{ end }}
@@ -10,8 +11,8 @@
 {{ define "headerphoto" }}
 	{{- $.Site.Params.headerPhoto -}}
 {{ end }}
-{{ define "main" }}
 
+{{ define "main" }}
 		<section id="category-list" class="card-group">
 				<div class="row">
 					{{range (.Paginate (where (where .Data.Pages ".Params.options.unlisted" false) "Section" "!=" "instagrams") 9).Pages }}

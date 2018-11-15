@@ -30,9 +30,11 @@
 							<h1 class="d-sm-block d-lg-none text-center mt-3">{{ i18n "stories" }}</h1>
 									<div class="card-deck justify-content-center px-3 m-0">
 											<div class="row">
-												{{ range where (where .Site.Pages "Section" "stories") ".Params.unlisted" "!=" true | intersect (where .Site.Pages "Params.story_featured" "=" true) }}
-												{{ partial "story-card.html" . }}
-												{{ end }}
+
+													{{ range where (where .Site.Pages "Section" "stories") ".Params.unlisted" "!=" true | intersect (where .Site.Pages "Params.story_featured" "=" true) }}
+													{{ partial "story-card.html" . }}
+													{{ end }}
+
 											</div>
 									</div>
 						{{ end }}

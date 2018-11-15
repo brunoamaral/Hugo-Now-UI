@@ -19,9 +19,9 @@ unlisted list
 	<section id="category-list">
 		<div class="row">
 
-			{{ range where .Site.RegularPages ".Params.options.unlisted" true }}
-				{{ .Render "summary"}}
-			{{ end }}
+				{{ range where .Site.RegularPages ".Params.options.unlisted" true }}
+					{{ .Render "summary"}}
+				{{ end }}
 
 		</div>
 	</section>

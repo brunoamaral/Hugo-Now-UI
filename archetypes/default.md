@@ -10,6 +10,7 @@ resources:
   title: gallery-title-:counter
 slug:
 stories:
+  -
 subtitle: 
 tags: 
   - 
