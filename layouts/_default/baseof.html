@@ -16,8 +16,8 @@ License: pixelarity.com/license
 	{{ end }}
 	{{ .Hugo.Generator }}
 	<meta charset="utf-8" />
-	{{ if isset .Params "unlisted" }}
-	{{ if eq .Params.unlisted true }}
+	{{ with $.Params.options.unlisted }}
+	{{ if eq $.Params.options.unlisted true }}
 	<meta name="robots" content="noindex, nofollow">
 	{{ end }}
 	{{ end }}
@@ -26,13 +26,12 @@ License: pixelarity.com/license
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 	<!-- CSS Files -->
-	<link href="/assets/css/bootstrap.min.css" rel="stylesheet" /> 
+	{{- $bootstrap := resources.Get "css/bootstrap.min.css" | resources.Fingerprint }}
+	<link href="{{ $bootstrap.Permalink }}" rel="stylesheet" /> 
 	{{- $style := resources.Get "scss/now-ui-kit.scss" | resources.ToCSS (dict "enableSourceMap" true) | resources.Minify | resources.Fingerprint }}
-	<link rel="stylesheet" href="{{ $style.Permalink }}">
-	{{- $custom := resources.Get "css/custom.css" | resources.ToCSS (dict "enableSourceMap" true) | resources.Minify | resources.Fingerprint }}
-	<link href="/custom.css" rel="stylesheet" />
-
-
+	<link href="{{ $style.Permalink }}" rel="stylesheet">
+	{{- $custom := resources.Get "scss/custom/custom.scss" | resources.ToCSS (dict "enableSourceMap" true) | resources.Minify | resources.Fingerprint }}
+	<link href="{{ $custom.Permalink }}" rel="stylesheet" />
 
 	{{ with .OutputFormats.Get "rss" }}
 	<link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title }}">
@@ -173,7 +172,6 @@ License: pixelarity.com/license
       <div class="collapse navbar-collapse justify-content-end" id="navigation" data-nav-image="/assets/img/blurred-image-1.jpg">
         <ul class="navbar-nav">
 
-
 			{{ range .Site.Menus.main }}
 			<li class="nav-item"><a href="{{ .URL | absLangURL }}" title="{{ .Post }}" class="nav-link top-menu menu-click {{ if ($.Page.IsMenuCurrent "main" .) ($.Page.HasMenuCurrent "main" .) }} active {{ end }}">{{ .Name }}</a></li>
 			{{ end }} {{ if .Site.IsMultiLingual }} {{ range .Site.Languages }} {{ if eq . $.Site.Language }}
@@ -182,7 +180,6 @@ License: pixelarity.com/license
 			<li class="nav-item"><a href="{{ .Permalink }}" class="nav-link">{{ .Lang }}</a></li>
 			{{ end }} {{ end }} {{ end }} {{ end }}
 			</ul>
-
 
       </div>
     </div>
@@ -195,7 +192,6 @@ License: pixelarity.com/license
     <div class="page-header {{ if ne .IsHome true }}page-header-small{{ end }}">
     	{{ if .IsHome }}
     	<div class="page-header-image" data-parallax="true" style="background-image: url('{{ $.Site.Params.headerPhoto }}'); transform: translate3d(0px, 0px, 0px);"></div>
-
 
     	<div class="container">
         <div class="content-center brand">
@@ -340,7 +336,7 @@ License: pixelarity.com/license
 		<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
 		<script src="/assets/js/plugins/nouislider.min.js" type="text/javascript"></script>
 		<!--  Plugin for the DatePicker, full documentation here: https://github.com/uxsolutions/bootstrap-datepicker -->
-		<script src="/assets/js/plugins/bootstrap-datepicker.js" type="text/javascript"></script>
+		<!-- <script src="/assets/js/plugins/bootstrap-datepicker.js" type="text/javascript"></script> -->
 		<!--  Google Maps Plugin    -->
 		{{ with $.Site.Params.apis.googlemaps }}
 		<script src="https://maps.googleapis.com/maps/api/js?key={{ . }}"></script>			
