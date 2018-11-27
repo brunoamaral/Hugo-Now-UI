@@ -1,25 +1,58 @@
-{{ define "bodyclasses" }}section-list post-list post-list-html contentgrouptype-{{ .Kind }} contentgroupname-{{ .Section | urlize }} {{ end }}
-
-{{ define "title" }}
-	{{ .Title }}
+{{ define "bodyclasses" }}section-list _default/section.html post-list post-list-html contentgrouptype-{{ .Section }} contentgroupname-{{ .CurrentSection.Title | urlize }}{{ end }}
+{{ define "description" }}
+    {{ if $.Page.Params.subtitle }}
+    <meta name="description" content="{{ $.Page.Params.subtitle }}" />
+    <meta name="twitter:description" content="{{ $.Page.Params.subtitle }}"/>        
+    {{ else if $.Page.Params.description }}
+    <meta name="description" content="{{ .Params.description }}" />
+    <meta name="twitter:description" content="{{ .Params.description }}"/>
+    {{ end }}
 {{ end }}
-
-{{ define "subtitle" }}
-
-{{ end }}
-
-{{ define "headerphoto" }}
-	{{- $.Site.Params.headerPhoto -}}
-{{ end }}
-
 {{ define "main" }}
-		<section id="category-list" class="card-group">
-				<div class="row px-2 mx-0">
-					{{ range (.Paginate (where (where .Site.RegularPages ".Params.options.unlisted" false) "Section" "!=" "instagrams") 9).Pages }}
-					     	{{ .Render "summary"}}
-					{{ end }}
-				</div>
-		</section>
+<div class="wrapper">
+    {{ partial "header-small.html" . }}
+    <div class="section">
+        <div class="container">
+            <a name="content"></a>
+            <section id="category-list" class="card-group">
+	                <div class="row">
+                    {{ $list := "none" }}
+                        {{ if eq .Params.options.unlisted true }}
+                            {{ $list = (where (where .Data.Pages ".Params.options.unlisted" true) "Section" "!=" "instagram") }}
+                        {{ else }}
+                            {{ $list = (where (where .Data.Pages ".Params.options.unlisted" false) "Section" "!=" "instagram") }}
+                        {{ end }}
 
-		{{ partial "pagination.html" . }}
+
+                        {{ with .Sections }}
+                            {{ $stories := where . ".Params.options.unlisted" false }}
+                            {{ range $stories }} 
+                                {{ .Scratch.Set "columns" (len $stories) }}
+                                {{ partial "story-card.html" . }}
+                            {{ end }}                               
+                        {{ end }}
+
+                        {{ if eq .Section "story" }}
+                            <div class="col-12">{{ .Content }}</div>
+                        {{ end }}
+
+                        {{ if eq .Section "post" }}
+                            {{ range (.Paginate (where (where .Site.RegularPages ".Params.options.unlisted" false) "Section" "!=" "instagram") 9).Pages }}
+                                {{ .Render "summary" }}
+                            {{ end }}
+                        {{ else }}
+	                    {{ range (.Paginate $list 9).Pages }}
+	                    	{{ .Render "summary" }}
+	                    {{ end }}
+                        {{ end }}
+
+
+
+	                    {{ partial "pagination.html" . }}
+	                </div>
+            </section>
+            <div class="separator separator-primary"></div>
+        </div>
+    </div>
+</div>
 {{ end }}

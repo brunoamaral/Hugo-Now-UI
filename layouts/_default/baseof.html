@@ -1,10 +1,4 @@
 <!DOCTYPE html>
-<!--
-Future Imperfect by Pixelarity
-pixelarity.com | hello@pixelarity.com
-License: pixelarity.com/license
-1136239445
--->
 <html lang="{{ .Lang }}">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -12,7 +6,7 @@ License: pixelarity.com/license
 	{{ if .IsHome }}
 	<title>{{ .Site.Title }}</title>
 	{{ else }}
-	<title>{{ .Site.Title }}{{ with .Title }} - {{ . | humanize }}{{ end }}{{ with .Params.story_title }}-{{ . }}{{ end }}</title>
+	<title>{{ with .Title }}{{ . | humanize }}{{ end }}</title>
 	{{ end }}
 	{{ .Hugo.Generator }}
 	<meta charset="utf-8" />
@@ -30,8 +24,6 @@ License: pixelarity.com/license
 	<link href="{{ $bootstrap.Permalink }}" rel="stylesheet" /> 
 	{{- $style := resources.Get "scss/now-ui-kit.scss" | resources.ToCSS (dict "enableSourceMap" true) | resources.Minify | resources.Fingerprint }}
 	<link href="{{ $style.Permalink }}" rel="stylesheet">
-	{{- $custom := resources.Get "scss/custom/custom.scss" | resources.ToCSS (dict "enableSourceMap" true) | resources.Minify | resources.Fingerprint }}
-	<link href="{{ $custom.Permalink }}" rel="stylesheet" />
 
 	{{ with .OutputFormats.Get "rss" }}
 	<link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}" title="{{ $.Site.Title }}">
@@ -43,57 +35,82 @@ License: pixelarity.com/license
 	<link rel="alternate" href="{{ .Permalink }}" hreflang="{{ .Lang }}">
 	    {{ end}}
 	{{ end }}
+	<meta property="og:title" content="{{ .Title }}" />
+		{{ block "description" . }}
+		<meta name="description" content="{{ $.Site.Params.description }}" />
+		<meta name="twitter:description" content="{{ $.Site.Params.description }}"/>			
+		{{ end }}		
+	<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+	<meta property="og:url" content="{{ .Permalink }}" />
+	{{- with .Params.images }}{{ range first 6 . }}
+	<meta property="og:image" content="{{ . | absURL }}" />
+	{{ end }}{{ end }}
+	{{- if .IsPage }}
+	{{- if not .PublishDate.IsZero }}<meta property="article:published_time" content="{{ .PublishDate.Format "2006-01-02T15:04:05-07:00" | safeHTMLAttr }}"/>
+	{{ else if not .Date.IsZero }}<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTMLAttr }}"/>
+	{{ end }}
+	{{- if not .Lastmod.IsZero }}<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" | safeHTMLAttr }}"/>{{ end }}
+	{{- else }}
+	{{- if not .Date.IsZero }}
+	<meta property="og:updated_time" content="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTMLAttr }}"/>
+	{{- end }}
+	{{- end }}{{/* .IsPage */}}
+	{{- with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+	{{- with .Params.locale }}<meta property="og:locale" content="{{ . }}" />{{ end }}
+	{{- with .Site.Params.title }}<meta property="og:site_name" content="{{ . }}" />{{ end }}
+	{{- with .Params.videos }}
+	{{- range . }}
+	<meta property="og:video" content="{{ . | absURL }}" />
+	{{ end }}{{ end }}
+	{{- /* If it is part of a series, link to related articles */}}
+	{{- $permalink := .Permalink }}
+	{{- $siteSeries := .Site.Taxonomies.series }}{{ with .Params.series }}
+	{{- range $name := . }}
+	  {{- $series := index $siteSeries $name }}
+	  {{- range $page := first 6 $series.Pages }}
+	    {{- if ne $page.Permalink $permalink }}<meta property="og:see_also" content="{{ $page.Permalink }}" />{{ end }}
+	  {{- end }}
+	{{ end }}{{ end }}
+	{{- if .IsPage }}
+	{{- range .Site.Authors }}{{ with .Social.facebook }}
+	<meta property="article:author" content="https://www.facebook.com/{{ . }}" />{{ end }}{{ with .Site.Social.facebook }}
+	<meta property="article:publisher" content="https://www.facebook.com/{{ . }}" />{{ end }}
+	<meta property="article:section" content="{{ .Section }}" />
+	{{- with .Params.tags }}{{ range first 6 . }}
+	<meta property="article:tag" content="{{ . }}" />{{ end }}{{ end }}
+	{{- end }}{{ end }}
+	{{- /* Facebook Page Admin ID for Domain Insights */}}
+	{{- with .Site.Social.facebook_admin }}<meta property="fb:admins" content="{{ . }}" />{{ end }}
 
-	{{ template "_internal/opengraph.html" . }}
-
-	<meta property="og:site_name" content="{{ .Site.Title }} by {{ $.Site.Params.author }}" />
-	<meta name="twitter:site" content="{{ .Site.Title }}"/>
-	<meta name="twitter:title" content="{{ .Title }}"/>
-	<meta name="twitter:card" content="summary_large_image"/>
+		<meta property="og:site_name" content="{{ .Site.Title }} by {{ $.Site.Params.author }}" />
+		<meta name="twitter:site" content="{{ .Site.Title }}"/>
+		<meta name="twitter:title" content="{{ .Title }}"/>
+		<meta name="twitter:card" content="summary_large_image"/>
 
 	{{ if .IsHome }}
-		<meta name="description" content="{{ $.Site.Params.description }}" />
-		<meta name="twitter:description" content="{{ $.Site.Params.description }}"/>
 		<meta property="og:image" content="{{ $.Site.BaseURL }}{{ $.Site.Params.logo }}" />
 	{{ else }}
-		<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}" />
-		<meta name="twitter:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}"/>
-	{{ if and (.Section) (ne .IsPage true) }}
-		{{ with .Resources.GetMatch "sectionHeader" }}
-			{{ $image := .Fill "500x500" }}
-			<meta name="twitter:image" content="{{ with $image }}{{ $image.Permalink }}{{ else }}{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}{{ end }}"/> 
-			<meta property="og:image" content="{{ with $image }}{{ $image.Permalink }}{{ else }}{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}{{ end }}" />
+	{{ if or (and (.Section) (ne .IsPage true)) (.IsPage) }}
+		{{ with .Resources.GetMatch "header" }}
+			{{ $image := .Fill "640x640" }}
+			<meta name="twitter:image" content="{{ with $image }}{{ .Permalink }}{{ else }}{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}{{ end }}"/> 
+			<meta property="og:image" content="{{ with $image }}{{ .Permalink }}{{ else }}{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}{{ end }}" />
 		{{ end }}
 	{{end}}
 
-	{{ if .IsPage }}
-		{{ with .Resources.GetMatch "header" }}
-			{{ $image := .Fill "500x500" }} 
-			<meta name="twitter:image" content="{{ $image.Permalink }}" />
-			<meta property="og:image" content="{{ $image.Permalink }}" />
-		{{ else }}
-			<meta property="og:image" content="{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}" />
-			<meta name="twitter:image" content="{{ .Site.BaseURL }}{{ $.Site.Params.defaultImage }}" />
-		{{ end }}
-	{{ end }}
-
 	{{ end }}
 	{{ if not .Date.IsZero }}<meta property="og:updated_time" content="{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}"/>{{ end }}
-{{ with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
-{{ with .Params.locale }}<meta property="og:locale" content="{{ . }}" />{{ end }}
+	{{ with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+	{{ with .Params.locale }}<meta property="og:locale" content="{{ . }}" />{{ end }}
 	{{ with .Params.videos }}{{ range .Params.videos }}
 	<meta property="og:video" content="{{ . | absURL }}" />{{ end }}{{ end }}
 	<!-- If it is part of a story, link to related articles -->
 	{{ if .IsPage }}
 	<link rel="author" href="{{ if .Params.author_googleplus }}{{ .Params.author_googleplus }}{{else}}{{$.Site.Params.authors.Main.googleplus}}{{end}}"/>
-		{{ $permalink := .Permalink }} {{ $siteSeries := .Site.Taxonomies.stories }}
-	{{ with .Params.story }}
-	{{ range $name := . }}
-	  {{ $stories := index $siteSeries $name }}
-	  {{ range $page := first 6 $stories.Pages }}
-	    {{ if ne $page.Permalink $permalink }}<meta property="og:see_also" content="{{ $page.Permalink }}" />{{ end }}
+	  {{ $permalink := .Permalink }} 
+	  {{- range first 6 (where (where .Site.RegularPages ".Params.options.unlisted" false) "Section" "=" .Section ) }}
+	  	{{- if ne .Permalink $permalink }}<meta property="og:see_also" content="{{ .Permalink }}" />{{- end }}
 	  {{ end }}
-	{{ end }}{{ end }}
 	<meta property="article:author" content="{{ $.Site.Params.author }}" />
 	<meta name="twitter:creator" content="@{{ $.Site.Params.twitterHandle }}">
 
@@ -160,7 +177,7 @@ License: pixelarity.com/license
       </div>
   		-->
       <div class="navbar-translate">
-        <a class="navbar-brand" href="/" rel="tooltip" title="" data-placement="bottom" target="">
+        <a class="navbar-brand menu-click" href="/" rel="tooltip" title="" data-placement="bottom" target="">
           {{ .Site.Title }}
         </a>
         <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,9 +190,9 @@ License: pixelarity.com/license
         <ul class="navbar-nav">
 
 			{{ range .Site.Menus.main }}
-			<li class="nav-item"><a href="{{ .URL | absLangURL }}" title="{{ .Post }}" class="nav-link top-menu menu-click {{ if ($.Page.IsMenuCurrent "main" .) ($.Page.HasMenuCurrent "main" .) }} active {{ end }}">{{ .Name }}</a></li>
+			<li class="nav-item {{ if ($.Page.IsMenuCurrent "main" .) ($.Page.HasMenuCurrent "main" .) }} active {{ end }}"><a href="{{ .URL | absLangURL }}" title="{{ .Post }}" class="nav-link top-menu menu-click">{{ .Name }}</a></li>
 			{{ end }} {{ if .Site.IsMultiLingual }} {{ range .Site.Languages }} {{ if eq . $.Site.Language }}
-			<li class="nav-item"><a href="#" class="nav-link active language"><strong>{{ .Lang }}</strong></a></li>
+			<li class="nav-item active"><a href="#" class="nav-link language"><strong>{{ .Lang }}</strong></a></li>
 			{{ else }} {{ range $.Translations }}
 			<li class="nav-item"><a href="{{ .Permalink }}" class="nav-link">{{ .Lang }}</a></li>
 			{{ end }} {{ end }} {{ end }} {{ end }}
@@ -183,93 +200,54 @@ License: pixelarity.com/license
 
       </div>
     </div>
-  </nav>
+  </nav><!-- End Menu --><!-- End Navbar -->
 
-			<!-- End Menu -->
 
-  <!-- End Navbar -->
-  <div class="wrapper">
-    <div class="page-header {{ if ne .IsHome true }}page-header-small{{ end }}">
-    	{{ if .IsHome }}
-    	<div class="page-header-image" data-parallax="true" style="background-image: url('{{ $.Site.Params.headerPhoto }}'); transform: translate3d(0px, 0px, 0px);"></div>
+{{ block "main" . }}
+{{ end }}
 
-    	<div class="container">
-        <div class="content-center brand">
-        	<img class="n-logo" src="{{ $.Site.Params.logo }}" alt="">
-
-            <h1 class="h1-seo">{{ block "title" . }}{{ .Site.Title }}{{ end }}</h1>
-            			{{ if .IsHome }}
-	            			{{ $map := (index $.Site.Params.profiles ) }}
-	            			{{ range $key, $val := $map }}
-		                      	<a href="{{ $val }}" class="btn btn-primary btn-icon btn-round">
-		                      	  <i class="fab fa-{{ printf $key }}"></i>
-		                      	</a>
-	                      	{{ end }}
-                      	{{ end }}
-            <h3>{{ block "subtitle" . }}
-            	
-            {{ end }}</h3>
-        </div>
-<!--         <h6 class="category category-absolute">Designed by <a href="http://invisionapp.com/" target="_blank"><img src="./assets/img/invision-white-slim.png" class="invision-logo"></a>. Coded by <a href="https://www.creative-tim.com" target="_blank"><img src="./assets/img/creative-tim-white-slim2.png" class="creative-tim-logo"></a>.</h6>
- -->    </div>
-    	{{ else }}
-    	<div class="page-header-image" data-parallax="true" style="background-image: url('{{- block "headerphoto" . }}{{ end }}');">
-    	
-      </div>
-      <div class="content-center">
+{{ if ne $.Params.options.hideSubscribeForm true | and (ne .Section "instagrams")   }}
+	<div class="subscribe-line subscribe-line-image">
         <div class="container">
-          <h1 class="title" itemprop="headline">
-          	{{ block "title"  . }}
-          	{{ end }}
-          </h1>
-          {{ block "subtitle" . }}          	
-          {{ end }}
-          <div class="text-center">
-
-
-
+          <div class="row">
+            <div class="col-md-6 ml-auto mr-auto">
+              <div class="text-center">
+                <h4 class="title">{{ i18n "subscribe" }}</h4>
+                <p class="description">
+                  {{ i18n "subscribe_description" }}
+                </p>
+              </div>
+              <div class="card card-raised card-form-horizontal">
+                <div class="card-body">
+                  <form id="footerSubscribeForm" action="https://tinyletter.com/brunoamaral" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/brunoamaral', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+                    <div class="row">
+                      <div class="col-sm-8">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="now-ui-icons ui-1_email-85"></i></span>
+                          </div>
+                          <input type="text" class="form-control" placeholder="Email ...">
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <input type="submit" class="btn btn-primary btn-block" value="{{ i18n "submit_label" }}">
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      {{ end }}
     </div>
+{{ end }}
 
-	<div class="section">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					{{ block "main" . }}
-					{{ end }}
-				</div>
-			</div>
-			<div class="separator separator-primary"></div>
-				
-		</div>
-	</div>
-</div>
+{{ if ne .Section "instagrams" }}
+	{{ partial "footer.html" . }}	
+{{ end }}
 
-<!-- Footer -->
-
-	<footer id="footer" class="footer footer-default">
-		<div class="container">
-			<h2 class="sr-only">{{ i18n "related_links" }}</h2>
-				<ul class="icons mx-auto list-inline text-center">
-					<li class="list-inline-item"><a href="https://twitter.com/brunoamaral" class="fab fa-twitter"><span class="sr-only sr-only-focusable">Twitter</span></a></li>
-					<li class="list-inline-item"><a href="https://www.linkedin.com/in/brunoamaral" class="fab fa-linkedin"><span class="sr-only sr-only-focusable">LinkedIn</span></a></li>
-					<li class="list-inline-item"><a href="https://www.facebook.com/Bruno-Amaral-118353851516878/" class="fab fa-facebook"><span class="sr-only sr-only-focusable">Facebook</span></a></li>
-					<li class="list-inline-item"><a href="https://instagram.com/brunoamaral" class="fab fa-instagram"><span class="sr-only sr-only-focusable">Instagram</span></a></li>
-					<li class="list-inline-item"><a href="https://github.com/brunoamaral" class="fab fa-github"><span class="sr-only sr-only-focusable">Github</span></a></li>
-					<li class="list-inline-item"><a href="{{ .RSSLink }}" class="fa fa-rss"><span class="sr-only sr-only-focusable">RSS</span></a></li>
-					<li class="list-inline-item"><a href="/page/contact" class="fa fa-envelope"><span class="sr-only sr-only-focusable">Email</span></a></li>
-				</ul>
-				<div class="copyright">
-					&copy; {{ $.Site.Params.author }} | <a href="/page/privacy-policy/">Privacy Policy</a>
-				</div>
-		</div>
-	</footer>
 
 {{ if .HasShortcode "gallery" }}
-	
 	<!-- Root element of PhotoSwipe. Must have class pswp. -->
 	<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 	<!-- Background of PhotoSwipe.
@@ -325,16 +303,21 @@ License: pixelarity.com/license
 	<script src="/plugins/photoswipe/initphotoswipe.js"></script>
 	<script>initPhotoSwipeFromDOM('.gallery');</script>
 {{ end }} 
-
-
 		<!-- Scripts -->
-		<script src="/assets/js/core/jquery.min.js" type="text/javascript"></script>
-		<script src="/assets/js/core/popper.min.js" type="text/javascript"></script>
-		<script src="/assets/js/core/bootstrap.min.js" type="text/javascript"></script>
+		{{ $jquery := resources.Get "/js/core/jquery.min.js" | resources.Fingerprint }}
+		<script src="{{ $jquery.Permalink }}" type="text/javascript"></script>
+		{{ $popper := resources.Get "/js/core/popper.min.js" | resources.Fingerprint }}
+		<script src="{{ $popper.Permalink }}" type="text/javascript"></script>
+		{{ $bootstrap := resources.Get "/js/core/bootstrap.min.js" | resources.Fingerprint }}
+		<script src="{{ $bootstrap.Permalink }}" type="text/javascript"></script>
 		<!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
-		<script src="/assets/js/plugins/bootstrap-switch.js"></script>
+		{{ $bootstrapSwitch := resources.Get "/js/plugins/bootstrap-switch.js" | resources.Fingerprint }}
+		<script src="{{ $bootstrapSwitch.Permalink }}"></script>
 		<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-		<script src="/assets/js/plugins/nouislider.min.js" type="text/javascript"></script>
+		{{ $nouislider := resources.Get "/js/plugins/nouislider.min.js" | resources.Fingerprint }}
+		<script src="{{ $nouislider.Permalink }}" type="text/javascript"></script>
+		{{ $customJs := resources.Get "/js/custom.js" | resources.Fingerprint }}
+		<script src="{{ $customJs.Permalink }}" type="text/javascript"></script>
 		<!--  Plugin for the DatePicker, full documentation here: https://github.com/uxsolutions/bootstrap-datepicker -->
 		<!-- <script src="/assets/js/plugins/bootstrap-datepicker.js" type="text/javascript"></script> -->
 		<!--  Google Maps Plugin    -->
@@ -342,7 +325,8 @@ License: pixelarity.com/license
 		<script src="https://maps.googleapis.com/maps/api/js?key={{ . }}"></script>			
 		{{ end }}
 		<!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
-		<script src="/assets/js/now-ui-kit.js?v=1.2.0" type="text/javascript"></script>
+		{{ $nowuikitjs := resources.Get "/js/now-ui-kit.js" | resources.Fingerprint }}
+		<script src="{{ $nowuikitjs.Permalink }}" type="text/javascript"></script>
 
 			<script type="application/ld+json">
 			{ "@context": "http://schema.org", 
@@ -388,6 +372,10 @@ License: pixelarity.com/license
 			"articleBody": "{{ .Plain  }}"
 			}
 			</script>
-
+		{{ with .Params.scripts }}
+			{{ range . }}
+				{{- . | safeHTML }}
+			{{ end }}
+		{{ end }}
 		</body>
 </html>

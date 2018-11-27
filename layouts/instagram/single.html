@@ -1,0 +1,44 @@
+{{ define "bodyclasses" }}single instagram instagram.html contentgrouptype-instagrams contentgroupname-{{ .URL }}{{ end }}
+
+{{ define "bodyid" }}instagram{{ end }}
+
+{{ define "main" }}
+{{ $instagram := (.Page.Resources.GetMatch "header").Permalink | relURL }}
+<div class="page-header header-filter" filter-color="black">
+    <div class="page-header-image" style="background-image:url({{- $instagram }})"></div>
+    <div class="content">
+      <div class="container">
+        <div class="col-md-8 ml-auto mr-auto">
+
+              <!-- Post -->
+              <div class="card-deck">
+                <article class="card">
+                  <section class="card-body">
+                    <img src="{{- $instagram }}" alt="">
+                  </section>
+                  <footer>
+                    {{ if .PrevInSection }}
+                      <a href="{{ .PrevInSection.URL | relLangURL }}" class="btn btn-primary big previous">{{ i18n "older_photos" }}</a>
+                    {{ else }}
+                      <a href="#" class="disabled btn btn-light big previous">{{ i18n "older_photos" }}</a>
+                    {{ end }}
+                    {{ if .NextInSection }}
+                        <a href="{{ .NextInSection.URL | relLangURL }}" class="btn btn-primary big next">{{ i18n "newer_photos" }}</a>
+                    {{ else }}
+                        <a href="#" class="disabled btn btn-light big next">{{ i18n "newer_photos" }}</a>
+                    {{ end }}
+                  </footer>
+                </article>
+              </div>
+
+
+
+        </div>
+      </div>
+    </div>
+
+<!-- footer would go here --> 
+
+</div>
+			
+{{ end }}

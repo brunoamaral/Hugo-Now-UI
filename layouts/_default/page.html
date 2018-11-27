@@ -1,25 +1,24 @@
-{{ define "bodyclasses" }}single page contentgrouptype-{{ .Section }} contentgroupname-{{ .Title | urlize }}{{ end }}
+{{ define "bodyclasses" }}single page _default/page.html contentgrouptype-{{ .Section }} contentgroupname-{{ .Title | urlize }}{{ end }}
 
-{{ define "title" }}
-	{{ .Title }}
-{{ end }}
-
-{{ define "subtitle" }}
-	{{ with .Params.subtitle }}
-	<h2 class="text-center">{{ . }}</h2>
-	{{ end }}
-{{ end }}
-
-{{ define "headerphoto" }}
-	{{- partial "header_image" . -}}
+{{ define "description" }}
+	{{ partial "description.html" . }}
 {{ end }}
 
 {{ define "main" }}
+
+<div class="wrapper">
+  	{{ partial "header-small.html" . }}
+	<div class="section">
+		<div class="container">
 <!-- Main -->
 
 	<!-- Post -->
-		<article class="post">			
-			<section class="article-body">{{ .Content }}</section>
-		</article>
 
+	        <article class="post">
+	            <section class="article-body">{{ .Content }}</section>
+	        </article>
+	        <div class="separator separator-primary"></div>
+	    </div>
+	</div>
+</div>
 {{ end }}

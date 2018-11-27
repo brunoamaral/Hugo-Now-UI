@@ -1,9 +1,8 @@
 {{ define "bodyclasses" }} terms contentgrouptype-terms contentgroupname-the-stories article-title-subhomepage {{ end }}
-
 {{ define "description" }}
-	{{ partial "description.html" . }}
+	<meta name="description" content="{{ $.Page.Params.description }}" />
+	<meta name="twitter:description" content="{{ $.Page.Params.description }}"/>
 {{ end }}
-
 {{ define "main" }}
 <div class="wrapper">
   	<div class="page-header page-header-small">

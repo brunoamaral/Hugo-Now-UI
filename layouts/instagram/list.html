@@ -1,0 +1,43 @@
+{{ define "bodyclasses" }} instagram list-html contentgrouptype-instagrams contentgroupname-{{ .URL }} {{ end }}
+
+
+
+{{ define "main" }}
+<div class="wrapper">
+	<div class="page-header page-header-small">
+	    <div class="page-header-image" data-parallax="true" style="background-image: url('{{ partial "header-image.html" . }}');">
+	    </div>
+	    <div class="content-center">
+	        <div class="container">
+	            <div class="col-md-12 ml-auto mr-auto text-center">
+	                <h2 class="title" itemprop="headline" >{{ .Title }}</h2>
+	                {{ with $.Site.Params.instagramSubtitle }}
+	                	<h3 itemprop="subtitle">{{ . }}</h3>
+	                {{ end }}
+
+
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="section">
+		<div class="container">
+			<a name="content"></a>
+			<section id="category-list">
+				<div class="card-deck">
+					<div class="row">
+						{{range (.Paginate (where .Data.Pages ".Params.options.unlisted" "!=" true ) 9).Pages }}					
+							{{ .Render "summary"}}
+						{{ end }}
+						{{ partial "pagination.html" . }}
+					</div>
+				</div>
+			</section>
+			<div class="separator separator-primary"></div>
+		</div>
+	</div>
+</div>
+
+
+
+{{ end }}

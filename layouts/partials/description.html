@@ -1,0 +1,9 @@
+{{ define "description" }}
+    {{ if $.Page.Params.subtitle }}
+    <meta name="description" content="{{ $.Page.Params.subtitle }}" />
+    <meta name="twitter:description" content="{{ $.Page.Params.subtitle }}"/>        
+    {{ else if $.Page.Params.description }}
+    <meta name="description" content="{{ .Params.description }}" />
+    <meta name="twitter:description" content="{{ .Params.description }}"/>
+    {{ end }}
+{{ end }}

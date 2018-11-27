@@ -1,25 +1,26 @@
-{{ define "bodyclasses" }}post-list post-list-html contentgrouptype-{{ .Data.Singular }} contentgroupname-{{ .Title | urlize }} {{ end }}
+{{ define "bodyclasses" }}post-list _default/post-list-html contentgrouptype-{{ .Data.Singular }} contentgroupname-{{ .Title | urlize }} {{ end }}
 
-{{ define "title" }}
-	{{ .Title }}
-{{ end }}
+{{ define "description" }}
 
-{{ define "subtitle" }}
-
-{{ end }}
-
-{{ define "headerphoto" }}
-	{{- $.Site.Params.headerPhoto -}}
 {{ end }}
 
 {{ define "main" }}
-		<section id="category-list" class="card-group">
-				<div class="row">
-					{{range (.Paginate (where (where .Data.Pages ".Params.options.unlisted" false) "Section" "!=" "instagrams") 9).Pages }}
-						{{ .Render "summary" }}
-					{{ end }}
-				</div>
-		</section>
+<div class="wrapper">
+  	{{ partial "header-small.html" . }}
+	<div class="section">
+		<div class="container">
+			<a name="content"></a>
+			<section id="category-list" class="card-group">
+					<div class="row">
+						{{ range (.Paginate (where (where .Data.Pages "Section" "!=" "instagram") ".Params.options.unlisted" false) 9).Pages }}
+					        {{ .Render "summary" }}			
+						{{ end }}
+						{{ partial "pagination.html" . }}
+					</div>
+			</section>
+			<div class="separator separator-primary"></div>
+		</div>
+	</div>
+</div>
 
-		{{ partial "pagination.html" . }}
 {{ end }}

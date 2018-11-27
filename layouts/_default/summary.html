@@ -1,4 +1,4 @@
-<div class="col-sm-4 col col-12">
+<!--<div class="col-sm-4 col col-12">
 		<a href="{{ .Permalink }}" title="{{ .Summary }}" class="card mt-3 mx-auto">
 			{{ with .Resources.GetMatch "header" }}
 				{{ $image := .Fill "430x150" }} 
@@ -14,3 +14,40 @@
 			<p class="mb-0 px-3 card-footer"><time class="published" datetime="{{ .Date.Format "2006-01-02T15:04:05" }}">{{ .Date.Format "January 2, 2006" }}</time></p>
 		</a>
 </div>
+-->
+<!-- TEMPLATE 1 for blog post lists -->
+		<div class="col-md-4">
+              <div class="card card-plain card-blog">
+                <div class="card-image">
+                  <a href="{{ .Permalink }}">
+                  	{{ with .Resources.GetMatch "header" }}
+                  		{{ $image := .Fill "350x233" }}
+                    <img class="img rounded img-raised" src="{{ $image.Permalink }}">
+                    {{ else }}
+                    <img class="img rounded img-raised" src="{{ .Site.BaseURL }}images/fractal_thumb.jpg" alt="header" />
+                    {{ end }}
+                  </a>
+                </div>
+                <div class="card-body">
+                	{{ if isset .Params "categories" }}
+                	{{ range $index, $category := .Params.categories }}
+                  <h6 class="category text-info">{{ $category }}</h6>
+                  	{{ end }}
+                  	{{ end }}
+                  <h4 class="card-title">
+                    <a href="{{ .Permalink }}">{{ .Title }}</a>
+                  </h4>
+                  <p class="card-description">
+                    {{ .Summary | truncate 155 | plainify }}
+                    <a href="{{ .Permalink }}"> {{ i18n "read_more" }} </a>
+                  </p>
+                    {{ if .Params.author }}
+                    <div class="author">
+                      <img src="{{ $.Site.BaseURL }}/static/images/avatar_{{ .Params.author | urlize }}.jpg" alt="{{ .Params.author }}" class="avatar img-raised">
+                      <span>{{ .Params.author }}</span>
+                    </div>
+                    {{ end }}
+                  <p></p>
+                </div>
+              </div>
+            </div>

@@ -1,0 +1,19 @@
+
+
+<footer id="footer" class="footer {{ if ne .Section "instagrams" }}footer-default{{ end }}">
+	<div class="container">
+		<h2 class="sr-only">{{ i18n "related_links" }}</h2>
+			<ul class="icons mx-auto list-inline text-center">
+				<li class="list-inline-item"><a href="https://twitter.com/brunoamaral" class="fab fa-twitter"><span class="sr-only sr-only-focusable">Twitter</span></a></li>
+				<li class="list-inline-item"><a href="https://www.linkedin.com/in/brunoamaral" class="fab fa-linkedin"><span class="sr-only sr-only-focusable">LinkedIn</span></a></li>
+				<li class="list-inline-item"><a href="https://www.facebook.com/Bruno-Amaral-118353851516878/" class="fab fa-facebook"><span class="sr-only sr-only-focusable">Facebook</span></a></li>
+				<li class="list-inline-item"><a href="https://instagram.com/brunoamaral" class="fab fa-instagram"><span class="sr-only sr-only-focusable">Instagram</span></a></li>
+				<li class="list-inline-item"><a href="https://github.com/brunoamaral" class="fab fa-github"><span class="sr-only sr-only-focusable">Github</span></a></li>
+				<li class="list-inline-item"><a href="{{ .RSSLink }}" class="fa fa-rss"><span class="sr-only sr-only-focusable">RSS</span></a></li>
+				<li class="list-inline-item"><a href="/page/contact" class="fa fa-envelope"><span class="sr-only sr-only-focusable">Email</span></a></li>
+			</ul>
+			<div class="copyright">
+				&copy; {{ $.Site.Params.author }} | <a href="/page/privacy-policy/">Privacy Policy</a>
+			</div>
+	</div>
+</footer>

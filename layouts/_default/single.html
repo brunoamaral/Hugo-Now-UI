@@ -1,27 +1,22 @@
-{{ define "bodyclasses" }}single contentgrouptype-{{ .Section }} {{ with .Params.stories }}contentgroupname-{{ index . 0 | urlize }}{{ end }} article article-title-{{ .Title | urlize }}{{ end }}
+{{ define "bodyclasses" }}single _default/single.html contentgrouptype-{{ .Section }} contentgroupname-{{ .CurrentSection.Title | urlize }} article article-title-{{ .Title | urlize }}{{ end }}
 
-{{ define "title" }}
-	{{ .Title }}
-{{ end }}
-
-{{ define "subtitle" }}
-	{{ with .Params.subtitle }}
-		<h2 class="title">{{ .}}</h2>	
-	{{ end }}
-{{ end }}
-
-{{ define "headerphoto" }}
-	{{- partial "header_image.html" . -}}
+{{ define "description" }}
+	{{ partial "description.html" . }}
 {{ end }}
 
 {{ define "main" }}
+<div class="wrapper">
+  	{{ partial "header-small.html" . }}
+	<div class="section">
+
+					<div class="container">
 
 						<div class="row">
+							<div class="col">
 								<!-- Post -->
-									<article class="post col">
+									<article class="post col-md-8 ml-auto mr-auto">
 
 										<header>
-
 											<div class="meta text-center">
 												{{ if .Params.author }}
 													<a href="/about/{{ string .Params.author | urlize }}" itemprop="author" title="{{ .Params.author }}" class="author">{{ if .Params.avatar }} <img src="{{ $.Site.BaseURL }}images/avatar_{{ .Params.avatar }}.jpg" alt="" class="rounded-circle" /> {{ else }}<img src="{{ $.Site.BaseURL }}images/avatar_bruno.jpg" alt="" />{{ end }}</a>
@@ -50,33 +45,26 @@
 										{{ end }}
 									{{ end }}
 
-									{{ if isset .Params "stories" }}
-										{{ range $index, $story := .Params.stories }}
-											<li><a href="{{ $.Site.BaseURL }}stories/{{ $story | urlize }}" class="">{{ $story }}</a></li>
-										{{ end }}
+									{{ if eq .Section "story" }}
+											<li><a href="{{ .CurrentSection.Permalink }}" class="">{{ .CurrentSection.Title }}</a></li>
 									{{ end }}
 
 											</ul>
 										</footer>
 									</article>
-						</div>
 
-					{{ if .Params.stories }} 
-					
-					{{ $name_url := index .Params.stories 0 | urlize }}
-					{{ $current_story := printf "%s/%s" "/stories" $name_url  }}
-					{{ $this := $.Site.GetPage $current_story }}
 
+					{{ if eq .Section "story" }}
 					<section id="category-list" class="px-5">
-						<h2>{{ $this.Params.story_title }}</h2> 
-
-						<h3>{{ $this.Params.story_subtitle }}</h3>
-
-						<p>Select one of the chapters</p>
+						<h2 class="title">{{ .CurrentSection.Title }}</h2> 
+						{{ with .CurrentSection.Params.subtitle }}
+						<h3>{{ . }}</h3>							
+						{{ end }}
+						<p>{{ i18n "select_one_of_the_pages_in_this_story" }}</p>
 
 						<div class="card-deck">
 							<div class="row">
-							{{ range (index .Site.Taxonomies.stories $name_url ) }}
+							{{ range where .CurrentSection.Pages ".Params.options.unlisted" false }}
 								{{ .Render "summary" }}
 							{{end}}
 							</div>
@@ -93,6 +81,10 @@
 						</div>
 					</div>
 
-
-			
+					<div class="separator separator-primary"></div>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>		
 {{ end }}
