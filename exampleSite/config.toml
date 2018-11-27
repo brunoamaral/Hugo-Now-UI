@@ -1,0 +1,176 @@
+timeout=20000
+baseurl = "https://brunoamaral.eu/"
+disqusShortname = "brunoamaral-eu"
+googleAnalytics = ""
+languageCode = "en-us"
+preserveTaxonomyNames = false
+publishdir = "/var/web/brunoamaral.eu"
+theme = "now-ui"
+title = "Digital Insanity Magazine"
+copyright = "Bruno Amaral 2018"
+
+[params]
+articlePublisher = "https://facebook.com/brunoamaral"
+author = "Bruno Amaral"
+defaultImage = "images/fractal_thumb.jpg"
+googleSiteVerification = ""
+googleTagManager = ""
+headerPhoto = "/static/homepage/hello-world.jpg"
+logo = "/static/logo_blue.png"
+logohomepage = '<img src="/logo_blue.png" />'
+subtitle = "The Creative Escape of Bruno Amaral"
+summary = ""
+twitterHandle = "brunoamaral"
+[params.profiles]
+linkedin = "https://linkedin.com/in/brunoamaral"
+twitter = "https://twitter.com/brunoamaral"
+instagram = "https://instagram.com/brunoamaral"
+facebook = "https://facebook.com/brunoamaral"
+github = "https://github.com/brunoamaral"
+
+[params.apis]
+googlemaps = ""
+
+
+[privacy]
+  [privacy.disqus]
+    disable = false
+  [privacy.googleAnalytics]
+    anonymizeIP = true
+    disable = false
+    respectDoNotTrack = true
+    useSessionStorage = false
+  [privacy.instagram]
+    disable = false
+    simple = true
+  [privacy.speakerDeck]
+    disable = false
+  [privacy.twitter]
+    disable = false
+    enableDNT = true
+  [privacy.vimeo]
+    disable = false
+  [privacy.youtube]
+    disable = false
+    privacyEnhanced = true
+
+
+[mediaTypes]
+[mediaTypes."application/json"]
+suffixes = ["json"]
+
+[outputs]
+	home = [ "HTML", "RSS", "JSON" ]
+	section = [ "HTML", "RSS"]
+	taxonomy = [ "HTML", "RSS"]
+
+
+[permalinks]
+	post = "/post/:slug/"
+
+[sitemap]
+	changefreq = "weekly"
+	priority = 0.5
+	filename = "sitemap.xml"
+
+[taxonomies]
+	tag = "tags"
+	category = "categories"
+
+[social]
+	facebook_admin = ""
+	facebook_app_id = ""
+
+DefaultContentLanguage = "en"
+
+[Languages]
+
+[Languages.en]
+weight = 1
+LanguageName = "English"
+
+[Languages.en.params]
+subtitle = "The creative escape of Bruno Amaral"
+description = "A creative escape by Bruno Amaral. Articles, blogposts, and projects relating to Digital Culture, Marketing and Technology."
+algoliaappid = ""
+algoliaapikey = ""
+algoliaindex = "brunoamaral.eu"
+
+[Languages.en.params.authors]
+[Languages.en.params.authors.Main]
+name = "Bruno Amaral"
+email = "bruno@amar.al"
+thumbnail = ""
+facebook = "brunoamaral"
+twitter = "brunoamaral"
+github = "brunoamaral"
+googleplus = "https://plus.google.com/u/0/+BrunoAmaral"
+bio = "I was a geek before it was cool."
+authorlink = "/page/the-author/"
+[Languages.en.params.authors.Joe]
+name = "Nothing joe"
+thumbnail = "joe.jpeg"
+facebook = "joe joe"
+twitter = "joe joe"
+github = "joe joe"
+bio = "I was joe before it was cool."
+
+[Languages.en.menu]
+
+[[Languages.en.menu.main]]
+name = "The Stories"
+url = "/story/"
+weight = 2
+post = "Come sit by the table, have a drink and read a tale"
+
+
+[[Languages.en.menu.main]]
+name = "The Photos"
+url = "/instagram/"
+weight = 3
+post = "Instagram"
+
+[Languages.pt]
+weight = 2
+LanguageName = "Portuguese"
+subtitle = "Contos de uma mente hiperactiva"
+description = "A fuga criativa de Bruno Amaral. Artigos, projectos, e escrita em torno de Cultura Digital, Marketing e Tecnologia"
+
+[[Languages.pt.menu.main]]
+name = "As Histórias"
+url = "/pt/story/"
+weight = 2
+post = "São mais do que estórias e menos do que histórias, mas contam mais do que contos."
+
+[[Languages.pt.menu.main]]
+name = "As Fotos"
+url = "/pt/instagrams/"
+weight = 3
+post = "Instagram"
+
+pygmentsOptions=""
+pygmentsCodefences=true
+pygmentsStyle="monokai"
+pygmentsUseClasses=true
+
+[imaging]
+# See https://github.com/disintegration/imaging
+# Imaging supports image resizing using various resampling filters. The most notable ones:
+
+# NearestNeighbor - Fastest resampling filter, no antialiasing.
+# Box - Simple and fast averaging filter appropriate for downscaling. When upscaling it's similar to NearestNeighbor.
+# Linear - Bilinear filter, smooth and reasonably fast.
+# MitchellNetravali - А smooth bicubic filter.
+# CatmullRom - A sharp bicubic filter.
+# Gaussian - Blurring filter that uses gaussian function, useful for noise removal.
+# Lanczos - High-quality resampling filter for photographic images yielding sharp results, but it's slower than cubic filters.
+resampleFilter = "lanczos"
+
+# Defatult JPEG quality setting. Default is 75.
+quality = 90
+
+# Anchor used when cropping pictures.
+# Default is "smart" which does Smart Cropping, using https://github.com/muesli/smartcrop
+# Smart Cropping is content aware and tries to find the best crop for each image.
+# Valid values are Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight
+anchor = "smart"
